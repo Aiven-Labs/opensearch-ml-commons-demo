@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OpenSearch deterministic agent demo</title>
+    <link rel="stylesheet" href="/app.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <header class="hero">
+      <div class="shell">
+        <div class="hero__top">
+          <div>
+            <p class="eyebrow">OpenSearch 3.8 · ML Commons</p>
+            <h1>Deterministic RAG agent</h1>
+            <p class="lede">
+              Compare retrieval strategies, then watch a fixed two-tool agent
+              turn evidence into a grounded answer.
+            </p>
+          </div>
+          <div class="status" aria-live="polite">
+            <span class="status__dot"></span>
+            <span id="cluster-status">Checking cluster…</span>
+          </div>
+        </div>
+
+        <form id="question-form" class="ask">
+          <label for="question">Ask about the indexed OpenSearch documentation</label>
+          <div class="ask__row">
+            <textarea id="question" rows="2" maxlength="2000">What can you say about ML Commons?</textarea>
+            <button id="run-button" type="submit">Run agent</button>
+          </div>
+          <div class="ask__footer">
+            <div class="examples" aria-label="Example questions">
+              <button type="button" data-question="Why should local models run on dedicated ML nodes?">ML nodes</button>
+              <button type="button" data-question="How are connector credentials protected?">Connector security</button>
+              <button type="button" data-question="How does reciprocal rank fusion work?">RRF</button>
+              <button type="button" data-question="Summarize that in five words." data-requires-memory="true">Memory follow-up</button>
+            </div>
+            <div class="conversation">
+              <label class="compare-toggle">
+                <input id="compare-retrieval" type="checkbox">
+                Compare retrieval
+              </label>
+              <span id="memory-label">New conversation</span>
+              <button id="reset-memory" type="button" hidden>Reset memory</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="section architecture" aria-labelledby="architecture-title">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Execution model</p>
+            <h2 id="architecture-title">Fixed order, visible boundaries</h2>
+          </div>
+          <span class="badge badge--green">conversational_flow</span>
+        </div>
+
+        <div class="flow" aria-label="Deterministic agent execution flow">
+          <div class="flow__step">
+            <span class="flow__number">1</span>
+            <strong>Question</strong>
+            <small>User input</small>
+          </div>
+          <span class="flow__arrow">→</span>
+          <div class="flow__step flow__step--blue">
+            <span class="flow__number">2</span>
+            <strong>VectorDBTool</strong>
+            <small>Local embedding + top 3</small>
+          </div>
+          <span class="flow__arrow">→</span>
+          <div class="flow__step flow__step--purple">
+            <span class="flow__number">3</span>
+            <strong>MLModelTool</strong>
+            <small>Claude + retrieved context</small>
+          </div>
+          <span class="flow__arrow">→</span>
+          <div class="flow__step">
+            <span class="flow__number">4</span>
+            <strong>Memory</strong>
+            <small>Continue with memory_id</small>
+          </div>
+        </div>
+
+        <div class="explain-grid">
+          <article>
+            <h3>What “deterministic” means</h3>
+            <p>
+              OpenSearch always runs the registered tools in the same order.
+              The LLM does not choose tools, indexes, or when to stop.
+            </p>
+          </article>
+          <article>
+            <h3>What it does not mean</h3>
+            <p>
+              Generated wording can still vary. Temperature 0 reduces
+              variation; grounding and citations constrain the answer.
+            </p>
+          </article>
+          <article>
+            <h3>Actual agent retrieval</h3>
+            <p>
+              The agent uses dense vector retrieval. The comparison below also
+              shows BM25 and hybrid RRF to explain alternative ranking paths.
+            </p>
+          </article>
+        </div>
+      </section>
+
+      <section id="run-state" class="section run-state" hidden aria-live="polite">
+        <div class="spinner"></div>
+        <div>
+          <strong>Running retrieval comparison and agent</strong>
+          <p>Vector inference and Claude generation may take a few seconds.</p>
+        </div>
+      </section>
+
+      <section id="error-panel" class="section error" hidden role="alert">
+        <h2>Request failed</h2>
+        <p id="error-message"></p>
+      </section>
+
+      <section id="answer-section" class="section" hidden aria-labelledby="answer-title">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Agent result</p>
+            <h2 id="answer-title">Grounded generation</h2>
+          </div>
+          <span id="total-time" class="badge"></span>
+        </div>
+        <div class="answer-layout">
+          <article class="answer-card">
+            <p id="answer-text"></p>
+          </article>
+          <aside class="metrics">
+            <div><span>Model</span><strong id="model-name">—</strong></div>
+            <div><span>Input tokens</span><strong id="input-tokens">—</strong></div>
+            <div><span>Output tokens</span><strong id="output-tokens">—</strong></div>
+            <div><span>Agent execution</span><strong id="agent-time">—</strong></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="retrieval-section" class="section" hidden aria-labelledby="retrieval-title">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Retrieval lab</p>
+            <h2 id="retrieval-title">Same question, three ranking strategies</h2>
+          </div>
+          <span id="retrieval-time" class="badge"></span>
+        </div>
+        <p class="section__intro">
+          Scores are meaningful only within their own method. Hybrid uses
+          OpenSearch’s search pipeline to combine rank positions with RRF.
+        </p>
+        <div class="retrieval-grid">
+          <article class="retrieval-column">
+            <header>
+              <span class="method-icon">K</span>
+              <div><h3>Keyword</h3><p>BM25 · exact terms</p></div>
+            </header>
+            <div id="keyword-results" class="result-list"></div>
+          </article>
+          <article class="retrieval-column retrieval-column--blue">
+            <header>
+              <span class="method-icon">V</span>
+              <div><h3>Vector</h3><p>384 dimensions · semantic</p></div>
+            </header>
+            <div id="vector-results" class="result-list"></div>
+          </article>
+          <article class="retrieval-column retrieval-column--green">
+            <header>
+              <span class="method-icon">H</span>
+              <div><h3>Hybrid</h3><p>BM25 + vector · RRF</p></div>
+            </header>
+            <div id="hybrid-results" class="result-list"></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section cli" aria-labelledby="cli-title">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Same agent, another interface</p>
+            <h2 id="cli-title">Run it from the CLI</h2>
+          </div>
+          <button id="copy-command" class="secondary" type="button">Copy command</button>
+        </div>
+        <pre><code id="cli-command">python3 scripts/deterministic_agent.py ask \
+  --question "What can you say about ML Commons?"</code></pre>
+        <p class="section__intro">
+          The browser and CLI call the same registered OpenSearch agent. The UI
+          adds a side-by-side retrieval explanation; it does not replace the agent.
+        </p>
+      </section>
+
+      <section class="section building-blocks" aria-labelledby="blocks-title">
+        <div class="section__heading">
+          <div>
+            <p class="eyebrow">Building blocks</p>
+            <h2 id="blocks-title">Where each capability lives</h2>
+          </div>
+        </div>
+        <div class="block-grid">
+          <article><strong>BM25</strong><p>OpenSearch inverted index ranks exact lexical evidence.</p></article>
+          <article><strong>Vector search</strong><p>Local open-weight model embeds the query; Lucene HNSW retrieves neighbors.</p></article>
+          <article><strong>Hybrid RRF</strong><p>A search pipeline combines lexical and vector rank positions.</p></article>
+          <article><strong>LLM generation</strong><p>MLModelTool calls Claude Sonnet 5 through the secured Aiven AI Gateway connector.</p></article>
+          <article><strong>Agent</strong><p>ML Commons orchestrates VectorDBTool then MLModelTool and stores conversation memory.</p></article>
+          <article><strong>Grounding</strong><p>The prompt requires indexed evidence, source URLs, and an explicit refusal when unsupported.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        Local demo UI · credentials stay in the Python process · bound to 127.0.0.1
+      </div>
+    </footer>
+  </body>
+</html>

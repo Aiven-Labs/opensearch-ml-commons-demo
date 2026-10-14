@@ -1,0 +1,90 @@
+[
+  {
+    "name": "huggingface/sentence-transformers/all-distilroberta-v1",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 768,
+    "purpose": "General-purpose sentence embeddings"
+  },
+  {
+    "name": "huggingface/sentence-transformers/all-MiniLM-L6-v2",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 384,
+    "purpose": "Small general-purpose sentence embeddings"
+  },
+  {
+    "name": "huggingface/sentence-transformers/all-MiniLM-L12-v2",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 384,
+    "purpose": "General-purpose embeddings with a larger encoder"
+  },
+  {
+    "name": "huggingface/sentence-transformers/all-mpnet-base-v2",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 768,
+    "purpose": "Higher-quality, heavier general-purpose embeddings"
+  },
+  {
+    "name": "huggingface/sentence-transformers/msmarco-distilbert-base-tas-b",
+    "version": "1.0.3",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 768,
+    "purpose": "Semantic search trained on MS MARCO"
+  },
+  {
+    "name": "huggingface/sentence-transformers/multi-qa-MiniLM-L6-cos-v1",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 384,
+    "purpose": "Question-to-passage retrieval; recommended for this demo"
+  },
+  {
+    "name": "huggingface/sentence-transformers/multi-qa-mpnet-base-dot-v1",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 768,
+    "purpose": "Higher-quality, heavier question-to-passage retrieval"
+  },
+  {
+    "name": "huggingface/sentence-transformers/paraphrase-MiniLM-L3-v2",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 384,
+    "purpose": "Very small paraphrase and similarity model"
+  },
+  {
+    "name": "huggingface/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 384,
+    "purpose": "Multilingual paraphrase and similarity embeddings"
+  },
+  {
+    "name": "huggingface/sentence-transformers/paraphrase-mpnet-base-v2",
+    "version": "1.0.1",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 768,
+    "purpose": "Larger paraphrase and similarity model"
+  },
+  {
+    "name": "huggingface/sentence-transformers/distiluse-base-multilingual-cased-v1",
+    "version": "1.0.2",
+    "format": "TORCH_SCRIPT",
+    "function": "TEXT_EMBEDDING",
+    "dimension": 512,
+    "purpose": "Multilingual sentence embeddings"
+  }
+]

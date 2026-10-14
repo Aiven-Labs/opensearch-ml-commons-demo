@@ -1,0 +1,74 @@
+[
+  {
+    "id": "ml-nodes",
+    "title": "ML node placement",
+    "text": "By default, ML Commons runs local models and ML tasks only on nodes with the ml role. Dedicated ML nodes isolate inference CPU and native-memory use from indexing and search. For development, plugins.ml_commons.only_run_on_ml_node can be set to false so eligible data nodes can run local models.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/cluster-settings/"
+  },
+  {
+    "id": "ml-limits",
+    "title": "ML Commons resource limits",
+    "text": "ML Commons defaults to at most 10 deployed models and 10 running ML tasks per node. Its circuit breakers default to 90 percent native-memory usage, 85 percent JVM-heap usage, and at least 5 GB of free disk. Requests are rejected when a threshold is exceeded.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/cluster-settings/"
+  },
+  {
+    "id": "local-model-lifecycle",
+    "title": "Local model lifecycle",
+    "text": "A local model is first registered and then deployed. Both operations are asynchronous and return ML task IDs that can be polled. Registration stores model metadata and artifact chunks. Deployment loads the reconstructed model into memory on an eligible node so it can serve prediction requests.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/using-ml-models/"
+  },
+  {
+    "id": "connector-security",
+    "title": "Connector credential security",
+    "text": "Remote model credentials belong in the connector credential object, not in each prediction request. ML Commons encrypts connector credentials with AES GCM and substitutes credential placeholders into outbound headers. Connector endpoints must match the trusted connector endpoint regular-expression allowlist.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/remote-models/blueprints/"
+  },
+  {
+    "id": "hybrid-search",
+    "title": "Hybrid search",
+    "text": "Hybrid search combines multiple query clauses, such as lexical BM25 and neural vector retrieval. A search pipeline combines their result lists. Reciprocal rank fusion combines rank positions rather than assuming that BM25 scores and vector similarity scores have the same scale.",
+    "url": "https://docs.opensearch.org/3.8/vector-search/ai-search/hybrid-search/"
+  },
+  {
+    "id": "vector-db-tool",
+    "title": "VectorDBTool",
+    "text": "VectorDBTool performs dense vector retrieval for an agent. Its configuration names the embedding model, index, embedding field, returned source fields, nearest-neighbor count, and document count. Runtime values can override some configured parameters, so index authorization must not depend on the prompt.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/agents-tools/tools/vector-db-tool/"
+  },
+  {
+    "id": "conversational-flow",
+    "title": "Conversational flow agents",
+    "text": "A conversational_flow agent runs its configured tools in a fixed order and stores conversation history. This is more predictable than a conversational agent in which an LLM selects tools iteratively. The returned memory_id is supplied on a later execution to continue the same conversation.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/agents-tools/agents/conversational-flow/"
+  },
+  {
+    "id": "agent-memory",
+    "title": "Agent memory isolation",
+    "text": "Conversation memory stores messages for multi-turn interactions. Applications remain responsible for index permissions, user isolation, retention, and preventing one user from reading another user's conversation. A memory identifier is state, not an authorization boundary.",
+    "url": "https://docs.opensearch.org/3.8/ml-commons-plugin/api/memory-apis/"
+  },
+  {
+    "id": "ubi",
+    "title": "User Behavior Insights",
+    "text": "User Behavior Insights, or UBI, defines a schema that links queries, presented results, impressions, clicks, and other actions using identifiers. UBI supplies behavioral telemetry; it is not itself a ranking algorithm.",
+    "url": "https://docs.opensearch.org/3.8/search-plugins/ubi/"
+  },
+  {
+    "id": "relevance-workbench",
+    "title": "Search Relevance Workbench",
+    "text": "Search Relevance Workbench manages query sets, judgments, search configurations, and experiments. It supports pairwise comparison and pointwise evaluation so teams can compare lexical, neural, and hybrid configurations before intentionally deploying a winner.",
+    "url": "https://docs.opensearch.org/3.8/search-plugins/search-relevance/using-search-relevance-workbench/"
+  },
+  {
+    "id": "ltr",
+    "title": "Learning to Rank",
+    "text": "Learning to Rank is supervised reranking. It is normally applied only to a candidate window rather than every document, which controls latency and computation. OpenSearch supports RankLib and XGBoost ranking models.",
+    "url": "https://docs.opensearch.org/3.8/search-plugins/ltr/"
+  },
+  {
+    "id": "anomaly-detection",
+    "title": "Anomaly Detection",
+    "text": "OpenSearch Anomaly Detection uses unsupervised Random Cut Forest models over time-series features. It produces anomaly grades and confidence values. It is operational machine learning and does not require a generative language model.",
+    "url": "https://docs.opensearch.org/3.8/observing-your-data/ad/"
+  }
+]

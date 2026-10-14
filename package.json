@@ -1,0 +1,13 @@
+{
+  "name": "vienna-opensearch-usergroup-talk",
+  "private": true,
+  "scripts": {
+    "slides:html": "mkdir -p dist && marp --html --theme slides/theme.css slides/slides.md -o dist/talk.html",
+    "slides:pdf": "mkdir -p dist && marp --html --theme slides/theme.css slides/slides.md -o dist/talk.pdf",
+    "slides:pptx": "mkdir -p dist && marp --html --theme slides/theme.css slides/slides.md -o dist/talk.pptx",
+    "slides:preview": "marp --html --theme slides/theme.css --preview slides/slides.md"
+  },
+  "devDependencies": {
+    "@marp-team/marp-cli": "^4.2.3"
+  }
+}
