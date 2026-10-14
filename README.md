@@ -100,6 +100,12 @@ python3 scripts/remote_llm.py test
 python3 scripts/remote_llm.py test --prompt "Explain RRF in one sentence."
 ```
 
+OpenSearch Dashboards shows both models responding: the local
+`multi-qa-MiniLM-L6-cos-v1` embedding model and the external
+`aiven-claude-sonnet-5` model connected through Aiven AI Gateway.
+
+![Local embedding and remote LLM models responding in OpenSearch Dashboards](img/local_and_remote_models.png)
+
 ## Deterministic RAG agent
 
 Build the small documentation knowledge base using the local embedding model:
@@ -136,6 +142,22 @@ python3 scripts/demo_ui.py
 Open http://127.0.0.1:8080. The server reads credentials from `.env`; no
 OpenSearch or gateway credentials are sent to browser JavaScript. Keep using
 the existing CLI commands when you want to demonstrate the API-oriented path.
+
+The first question retrieves indexed documentation and produces a grounded
+answer with its source, model, token usage, and execution time:
+
+![A grounded answer to the first demo question](img/agent_demo_question_1.png)
+
+The follow-up reuses the same OpenSearch conversation memory, allowing the
+agent to understand what “that” refers to and summarize the previous answer:
+
+![A follow-up answer using conversation memory](img/agent_demo_question_2_with_memory.png)
+
+The **Out of domain** shortcut asks, “What is the weather in Vienna now?” Since
+the document index contains no current weather data, the grounded agent says
+that it does not know instead of inventing an answer:
+
+![The agent refusing an out-of-domain weather question](img/agent_demo_question_out_of_domain.png)
 
 ## TLS
 
